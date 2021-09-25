@@ -43,6 +43,7 @@ static size_t mpmcq_size_debug(mpmcq_t* q)
 #ifdef PLATFORM_IS_X86
   mpmcq_node_t* tail = q->tail.object;
 #else
+  // TODO SEAN
   mpmcq_node_t* tail = atomic_load_explicit(&q->tail, memory_order_relaxed);
 #endif
 
@@ -81,6 +82,7 @@ void ponyint_mpmcq_destroy(mpmcq_t* q)
   node_free(q->tail.object);
   q->tail.object = NULL;
 #else
+  // TODO SEAN
   mpmcq_node_t* tail = atomic_load_explicit(&q->tail, memory_order_relaxed);
   node_free(tail);
   atomic_store_explicit(&q->tail, NULL, memory_order_relaxed);
@@ -138,6 +140,7 @@ void* ponyint_mpmcq_pop(mpmcq_t* q)
   cmp.object = q->tail.object;
   cmp.counter = q->tail.counter;
 #else
+  // TODO SEAN
   mpmcq_node_t* tail = atomic_load_explicit(&q->tail, memory_order_relaxed);
 #endif
   mpmcq_node_t* next;
@@ -163,6 +166,7 @@ void* ponyint_mpmcq_pop(mpmcq_t* q)
   while(!bigatomic_compare_exchange_weak_explicit(&q->tail, &cmp, xchg,
     memory_order_relaxed, memory_order_relaxed));
 #else
+  // TODO SEAN
   while(!atomic_compare_exchange_weak_explicit(&q->tail, &tail, next,
     memory_order_relaxed, memory_order_relaxed));
 #endif

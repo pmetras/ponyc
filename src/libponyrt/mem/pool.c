@@ -719,6 +719,7 @@ static void pool_push(pool_local_t* thread, pool_global_t* global)
 
   xchg.object = p;
 #else
+  // TODO SEAN
   top = atomic_load_explicit(&global->central, memory_order_relaxed);
 #endif
 
@@ -738,6 +739,7 @@ static void pool_push(pool_local_t* thread, pool_global_t* global)
   while(!bigatomic_compare_exchange_weak_explicit(&global->central, &cmp,
     xchg, memory_order_release, memory_order_relaxed));
 #else
+  // TODO SEAN
   while(!atomic_compare_exchange_weak_explicit(&global->central, &top, p,
     memory_order_release, memory_order_relaxed));
 #endif
@@ -752,6 +754,7 @@ static pool_item_t* pool_pull(pool_local_t* thread, pool_global_t* global)
   cmp.object = global->central.object;
   cmp.counter = global->central.counter;
 #else
+  // TODO SEAN
   top = atomic_load_explicit(&global->central, memory_order_relaxed);
 #endif
   pool_central_t* next;
