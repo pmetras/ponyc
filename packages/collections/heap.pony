@@ -76,7 +76,7 @@ class BinaryHeap[A: Comparable[A] #read, P: BinaryHeapPriority[A]]
     _data.concat(iter, offset, len)
     _make_heap()
 
-  fun values(): ArrayValues[A, this->Array[A]]^ =>
+  fun values(): Iterator[this->A]^ =>
     """
     Return an iterator for the elements in the heap. The order of elements is
     arbitrary.

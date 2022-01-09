@@ -99,7 +99,7 @@ static const char* const _builtin =
   // - call .values() iterator in a for loop
   // - be a subtype of Seq
   // - call genprim_array_serialise_trace (which expects the three fields)
-  "class ArrayValues[A]\n"
+  "class _ArrayValues[A]\n"
   "  fun ref has_next(): Bool => false\n"
   "  fun ref next(): A ? => error\n"
   "class Array[A] is Seq[A]\n"
@@ -110,7 +110,7 @@ static const char* const _builtin =
   "  fun ref push(value: A) => true\n"
   "  fun apply(index: USize): this->A ? => error\n"
   "  fun values(): Iterator[this->A]^ =>\n"
-  "    ArrayValues[this->A]\n"
+  "    _ArrayValues[this->A]\n"
   "interface Iterator[A]\n"
   "  fun ref has_next(): Bool\n"
   "  fun ref next(): A ?\n"

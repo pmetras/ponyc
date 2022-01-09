@@ -338,7 +338,7 @@ class Iter[A] is Iterator[A]
     Iter[A!](
       object is Iterator[A!]
         let _store: Array[A!] = store
-        var _store_iter: ArrayValues[A!, Array[A!]] = store.values()
+        var _store_iter: (Iterator[A!] & Rewindable[A!]) = store.values()
         var _first_time_through: Bool = true
 
         fun ref has_next(): Bool => true

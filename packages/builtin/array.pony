@@ -919,25 +919,32 @@ class Array[A] is Seq[A]
     _ptr._update(i, _ptr._apply(j))
     _ptr._update(j, consume x)
 
-  fun keys(): ArrayKeys[A, this->Array[A]]^ =>
+  fun keys(): Iterator[USize]^ =>
     """
     Return an iterator over the indices in the array.
     """
-    ArrayKeys[A, this->Array[A]](this)
+    _ArrayKeys[A, this->Array[A]](this)
 
-  fun values(): ArrayValues[A, this->Array[A]]^ =>
+  fun values(): (Iterator[this->A] & Rewindable[this->A]) =>
     """
     Return an iterator over the values in the array.
     """
-    ArrayValues[A, this->Array[A]](this)
+    _ArrayValues[A, this->Array[A]](this)
 
-  fun pairs(): ArrayPairs[A, this->Array[A]]^ =>
+  fun pairs(): Iterator[(USize, this->A)]^ =>
     """
     Return an iterator over the (index, value) pairs in the array.
     """
-    ArrayPairs[A, this->Array[A]](this)
+    _ArrayPairs[A, this->Array[A]](this)
 
-class ArrayKeys[A, B: Array[A] #read] is Iterator[USize]
+interface Rewindable[A]
+  """
+  An `Iterator` is rewindable when it can be rewinded, that is start again from
+  first value.
+  """
+  fun ref rewind(): Iterator[A]^
+
+class _ArrayKeys[A, B: Array[A] #read] is Iterator[USize]
   let _array: B
   var _i: USize
 
@@ -955,7 +962,7 @@ class ArrayKeys[A, B: Array[A] #read] is Iterator[USize]
       _i
     end
 
-class ArrayValues[A, B: Array[A] #read] is Iterator[B->A]
+class _ArrayValues[A, B: Array[A] #read] is Iterator[B->A]
   let _array: B
   var _i: USize
 
@@ -969,11 +976,11 @@ class ArrayValues[A, B: Array[A] #read] is Iterator[B->A]
   fun ref next(): B->A ? =>
     _array(_i = _i + 1)?
 
-  fun ref rewind(): ArrayValues[A, B] =>
+  fun ref rewind(): _ArrayValues[A, B] =>
     _i = 0
     this
 
-class ArrayPairs[A, B: Array[A] #read] is Iterator[(USize, B->A)]
+class _ArrayPairs[A, B: Array[A] #read] is Iterator[(USize, B->A)]
   let _array: B
   var _i: USize
 
