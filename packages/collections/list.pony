@@ -632,29 +632,29 @@ class List[A] is Seq[A]
       false
     end
 
-  fun nodes(): ListNodes[A, this->ListNode[A]]^ =>
+  fun nodes(): Iterator[this->ListNode[A]]^ =>
     """
     Return an iterator on the nodes in the list.
     """
-    ListNodes[A, this->ListNode[A]](_head)
+    _ListNodes[A, this->ListNode[A]](_head)
 
-  fun rnodes(): ListNodes[A, this->ListNode[A]]^ =>
+  fun rnodes(): Iterator[this->ListNode[A]]^ =>
     """
     Return an iterator on the nodes in the list.
     """
-    ListNodes[A, this->ListNode[A]](_head, true)
+    _ListNodes[A, this->ListNode[A]](_head, true)
 
-  fun values(): ListValues[A, this->ListNode[A]]^ =>
+  fun values(): Iterator[this->A]^ =>
     """
     Return an iterator on the values in the list.
     """
-    ListValues[A, this->ListNode[A]](_head)
+    _ListValues[A, this->ListNode[A]](_head)
 
-  fun rvalues(): ListValues[A, this->ListNode[A]]^ =>
+  fun rvalues(): Iterator[this->A]^ =>
     """
     Return an iterator on the values in the list.
     """
-    ListValues[A, this->ListNode[A]](_head, true)
+    _ListValues[A, this->ListNode[A]](_head, true)
 
   fun ref _increment() =>
     _size = _size + 1
@@ -674,7 +674,7 @@ class List[A] is Seq[A]
     _tail = node
     _size = 1
 
-class ListNodes[A, N: ListNode[A] #read] is Iterator[N]
+class _ListNodes[A, N: ListNode[A] #read] is Iterator[N]
   """
   Iterate over the nodes in a list.
   """
@@ -711,7 +711,7 @@ class ListNodes[A, N: ListNode[A] #read] is Iterator[N]
       error
     end
 
-class ListValues[A, N: ListNode[A] #read] is Iterator[N->A]
+class _ListValues[A, N: ListNode[A] #read] is Iterator[N->A]
   """
   Iterate over the values in a list.
   """

@@ -367,25 +367,25 @@ class HashMap[K, V, H: HashFunction[K] val]
       end
     end
 
-  fun keys(): MapKeys[K, V, H, this->HashMap[K, V, H]]^ =>
+  fun keys(): Iterator[this->K]^ =>
     """
     Return an iterator over the keys.
     """
-    MapKeys[K, V, H, this->HashMap[K, V, H]](this)
+    _MapKeys[K, V, H, this->HashMap[K, V, H]](this)
 
-  fun values(): MapValues[K, V, H, this->HashMap[K, V, H]]^ =>
+  fun values(): Iterator[this->V]^ =>
     """
     Return an iterator over the values.
     """
-    MapValues[K, V, H, this->HashMap[K, V, H]](this)
+    _MapValues[K, V, H, this->HashMap[K, V, H]](this)
 
-  fun pairs(): MapPairs[K, V, H, this->HashMap[K, V, H]]^ =>
+  fun pairs(): Iterator[(this->K, this->V)]^ =>
     """
     Return an iterator over the keys and values.
     """
-    MapPairs[K, V, H, this->HashMap[K, V, H]](this)
+    _MapPairs[K, V, H, this->HashMap[K, V, H]](this)
 
-class MapKeys[K, V, H: HashFunction[K] val, M: HashMap[K, V, H] #read] is
+class _MapKeys[K, V, H: HashFunction[K] val, M: HashMap[K, V, H] #read] is
   Iterator[M->K]
   """
   An iterator over the keys in a map.
@@ -416,7 +416,7 @@ class MapKeys[K, V, H: HashFunction[K] val, M: HashMap[K, V, H] #read] is
     _count = _count + 1
     _map.index(_i)?._1
 
-class MapValues[K, V, H: HashFunction[K] val, M: HashMap[K, V, H] #read] is
+class _MapValues[K, V, H: HashFunction[K] val, M: HashMap[K, V, H] #read] is
   Iterator[M->V]
   """
   An iterator over the values in a map.
@@ -447,7 +447,7 @@ class MapValues[K, V, H: HashFunction[K] val, M: HashMap[K, V, H] #read] is
     _count = _count + 1
     _map.index(_i)?._2
 
-class MapPairs[K, V, H: HashFunction[K] val, M: HashMap[K, V, H] #read] is
+class _MapPairs[K, V, H: HashFunction[K] val, M: HashMap[K, V, H] #read] is
   Iterator[(M->K, M->V)]
   """
   An iterator over the keys and values in a map.

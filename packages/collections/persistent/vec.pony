@@ -223,23 +223,23 @@ class val Vec[A: Any #share]
     end
     vec
 
-  fun val keys(): VecKeys[A]^ =>
+  fun val keys(): Iterator[USize]^ =>
     """
     Return an iterator over the indices in the vector.
     """
-    VecKeys[A](this)
+    _VecKeys[A](this)
 
-  fun val values(): VecValues[A]^ =>
+  fun val values(): Iterator[A]^ =>
     """
     Return an iterator over the values in the vector.
     """
-    VecValues[A](this)
+    _VecValues[A](this)
 
-  fun val pairs(): VecPairs[A]^ =>
+  fun val pairs(): Iterator[(USize, A)]^ =>
     """
     Return an iterator over the (index, value) pairs in the vector.
     """
-    VecPairs[A](this)
+    _VecPairs[A](this)
 
   fun _pow32(n: USize): USize =>
     """
@@ -259,25 +259,25 @@ class val Vec[A: Any #share]
     if _tail.size() > 0 then lns.push(_tail) end
     lns
 
-class VecKeys[A: Any #share]
-  embed _pairs: VecPairs[A]
+class _VecKeys[A: Any #share]
+  embed _pairs: _VecPairs[A]
 
-  new create(v: Vec[A]) => _pairs = VecPairs[A](v)
+  new create(v: Vec[A]) => _pairs = _VecPairs[A](v)
 
   fun has_next(): Bool => _pairs.has_next()
 
   fun ref next(): USize ? => _pairs.next()?._1
 
-class VecValues[A: Any #share]
-  embed _pairs: VecPairs[A]
+class _VecValues[A: Any #share]
+  embed _pairs: _VecPairs[A]
 
-  new create(v: Vec[A]) => _pairs = VecPairs[A](v)
+  new create(v: Vec[A]) => _pairs = _VecPairs[A](v)
 
   fun has_next(): Bool => _pairs.has_next()
 
   fun ref next(): val->A ? => _pairs.next()?._2
 
-class VecPairs[A: Any #share]
+class _VecPairs[A: Any #share]
   let _leaf_nodes: Array[Array[A] val]
   var _idx: USize = 0
   var _i: USize = 0

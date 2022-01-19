@@ -925,7 +925,7 @@ class Array[A] is Seq[A]
     """
     _ArrayKeys[A, this->Array[A]](this)
 
-  fun values(): (Iterator[this->A] & Rewindable[this->A]) =>
+  fun values(): RewindableIterator[this->A]^ =>
     """
     Return an iterator over the values in the array.
     """
@@ -937,12 +937,28 @@ class Array[A] is Seq[A]
     """
     _ArrayPairs[A, this->Array[A]](this)
 
-interface Rewindable[A]
+interface RewindableIterator[A] is Iterator[A]
   """
-  An `Iterator` is rewindable when it can be rewinded, that is start again from
-  first value.
+  A `RewindableIterator` is an iterator that can be rewinded, that is start
+  again from first item. The data structure being iterated on can't change the
+  order it return iterated items.
   """
+  fun has_next(): Bool
+    """
+    Return `true` when function `next` can be called to get next iteration item.
+    """
+
+  fun ref next(): A ?
+    """
+    Return the next item of the iteration or an error in case there are no other
+    items. A previous call to `has_next` check if we can continue iteration.
+    """
+
   fun ref rewind(): Iterator[A]^
+    """
+    Get a new iterator that can be used to start the iteration again from the
+    first item.
+    """
 
 class _ArrayKeys[A, B: Array[A] #read] is Iterator[USize]
   let _array: B
@@ -962,7 +978,7 @@ class _ArrayKeys[A, B: Array[A] #read] is Iterator[USize]
       _i
     end
 
-class _ArrayValues[A, B: Array[A] #read] is Iterator[B->A]
+class _ArrayValues[A, B: Array[A] #read] is RewindableIterator[B->A]
   let _array: B
   var _i: USize
 

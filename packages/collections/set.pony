@@ -277,13 +277,13 @@ class HashSet[A, H: HashFunction[A!] val] is Comparable[HashSet[A, H] box]
     """
     _map.index(i)?._2
 
-  fun values(): SetValues[A, H, this->HashSet[A, H]]^ =>
+  fun values(): Iterator[this->A]^ =>
     """
     Return an iterator over the values.
     """
-    SetValues[A, H, this->HashSet[A, H]](this)
+    _SetValues[A, H, this->HashSet[A, H]](this)
 
-class SetValues[A, H: HashFunction[A!] val, S: HashSet[A, H] #read] is
+class _SetValues[A, H: HashFunction[A!] val, S: HashSet[A, H] #read] is
   Iterator[S->A]
   """
   An iterator over the values in a set.

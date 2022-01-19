@@ -125,27 +125,27 @@ class val HashMap[K: Any #share, V: Any #share, H: mut.HashFunction[K] val]
       this
     end
 
-  fun val keys(): MapKeys[K, V, H] => MapKeys[K, V, H](this)
+  fun val keys(): Iterator[K] => _MapKeys[K, V, H](this)
 
-  fun val values(): MapValues[K, V, H] => MapValues[K, V, H](this)
+  fun val values(): Iterator[V] => _MapValues[K, V, H](this)
 
-  fun val pairs(): MapPairs[K, V, H] => MapPairs[K, V, H](this)
+  fun val pairs(): Iterator[(K, V)] => _MapPairs[K, V, H](this)
 
   fun _root_node(): _MapSubNodes[K, V, H] => _root
 
-class MapKeys[K: Any #share, V: Any #share, H: mut.HashFunction[K] val]
-  embed _pairs: MapPairs[K, V, H]
+class _MapKeys[K: Any #share, V: Any #share, H: mut.HashFunction[K] val]
+  embed _pairs: _MapPairs[K, V, H]
 
-  new create(m: HashMap[K, V, H]) => _pairs = MapPairs[K, V, H](m)
+  new create(m: HashMap[K, V, H]) => _pairs = _MapPairs[K, V, H](m)
 
   fun has_next(): Bool => _pairs.has_next()
 
   fun ref next(): K ? => _pairs.next()?._1
 
-class MapValues[K: Any #share, V: Any #share, H: mut.HashFunction[K] val]
-  embed _pairs: MapPairs[K, V, H]
+class _MapValues[K: Any #share, V: Any #share, H: mut.HashFunction[K] val]
+  embed _pairs: _MapPairs[K, V, H]
 
-  new create(m: HashMap[K, V, H]) => _pairs = MapPairs[K, V, H](m)
+  new create(m: HashMap[K, V, H]) => _pairs = _MapPairs[K, V, H](m)
 
   fun has_next(): Bool => _pairs.has_next()
 
@@ -154,7 +154,7 @@ class MapValues[K: Any #share, V: Any #share, H: mut.HashFunction[K] val]
 interface _MapIter[K: Any #share, V: Any #share, H: mut.HashFunction[K] val] is
   Iterator[(_MapEntry[K, V, H] | _MapIter[K, V, H])]
 
-class MapPairs[K: Any #share, V: Any #share, H: mut.HashFunction[K] val]
+class _MapPairs[K: Any #share, V: Any #share, H: mut.HashFunction[K] val]
   embed _stack: Array[_MapIter[K, V, H]] = []
 
   new create(m: HashMap[K, V, H]) =>
