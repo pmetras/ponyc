@@ -12,7 +12,14 @@ All notable changes to the Pony compiler and standard library will be documented
 
 ### Changed
 
+
+## [0.46.0] - 2022-01-16
+
+### Changed
+
 - Stop creating CentOS 8 prebuilt ponyc releases ([PR #3955](https://github.com/ponylang/ponyc/pull/3955))
+- Hide C header implementation details related to actor pad size. ([PR #3960](https://github.com/ponylang/ponyc/pull/3960))
+- Change type of Env.root to AmbientAuth ([PR #3962](https://github.com/ponylang/ponyc/pull/3962))
 
 ## [0.45.2] - 2021-12-31
 
