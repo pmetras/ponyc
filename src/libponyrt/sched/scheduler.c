@@ -429,7 +429,9 @@ static bool quiescent(scheduler_t* sched, uint64_t tsc, uint64_t tsc2)
     }
   }
 
-  ponyint_cpu_core_pause(tsc, tsc2, use_yield);
+  if (use_yield)
+    ponyint_cpu_core_pause(tsc, tsc2);
+
   return false;
 }
 
@@ -1205,14 +1207,24 @@ void ponyint_sched_add(pony_ctx_t* ctx, pony_actor_t* actor)
   }
 }
 
-uint32_t ponyint_sched_cores()
+PONY_API uint32_t pony_schedulers()
 {
   return scheduler_count;
 }
 
-uint32_t ponyint_active_sched_count()
+PONY_API uint32_t pony_active_schedulers()
 {
   return get_active_scheduler_count();
+}
+
+PONY_API uint32_t pony_min_schedulers()
+{
+  return min_scheduler_count;
+}
+
+PONY_API bool pony_scheduler_yield()
+{
+  return use_yield;
 }
 
 PONY_API void pony_register_thread()

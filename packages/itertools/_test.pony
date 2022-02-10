@@ -2,7 +2,7 @@ use "collections"
 use "ponytest"
 use "time"
 
-actor Main is TestList
+actor \nodoc\ Main is TestList
   new create(env: Env) => PonyTest(env, this)
   new make() => None
 
@@ -14,12 +14,16 @@ actor Main is TestList
     test(_TestIterCollect)
     test(_TestIterCount)
     test(_TestIterCycle)
+    test(_TestIterDedup)
     test(_TestIterEnum)
     test(_TestIterFilter)
     test(_TestIterFilterMap)
     test(_TestIterFind)
     test(_TestIterFlatMap)
     test(_TestIterFold)
+    test(_TestIterInterleave)
+    test(_TestIterInterleaveShortest)
+    test(_TestIterIntersperse)
     test(_TestIterLast)
     test(_TestIterMap)
     test(_TestIterNextOr)
@@ -28,11 +32,13 @@ actor Main is TestList
     test(_TestIterRun)
     test(_TestIterSkip)
     test(_TestIterSkipWhile)
+    test(_TestIterStepBy)
     test(_TestIterTake)
     test(_TestIterTakeWhile)
+    test(_TestIterUnique)
     test(_TestIterZip)
 
-class iso _TestIterChain is UnitTest
+class \nodoc\ iso _TestIterChain is UnitTest
   fun name(): String => "itertools/Iter.chain"
 
   fun apply(h: TestHelper) =>
@@ -105,7 +111,7 @@ class iso _TestIterChain is UnitTest
       h.fail()
     end
 
-class iso _TestIterRepeatValue is UnitTest
+class \nodoc\ iso _TestIterRepeatValue is UnitTest
   fun name(): String => "itertools/Iter.repeat_value"
 
   fun apply(h: TestHelper) ? =>
@@ -114,7 +120,7 @@ class iso _TestIterRepeatValue is UnitTest
       h.assert_eq[String]("a", repeater.next()?)
     end
 
-class iso _TestIterAll is UnitTest
+class \nodoc\ iso _TestIterAll is UnitTest
   fun name(): String => "itertools/Iter.all"
 
   fun apply(h: TestHelper) ? =>
@@ -124,7 +130,7 @@ class iso _TestIterAll is UnitTest
     input(2)? = -6
     h.assert_false(Iter[I64](input.values()).all(is_positive))
 
-class iso _TestIterAny is UnitTest
+class \nodoc\ iso _TestIterAny is UnitTest
   fun name(): String => "itertools/Iter.any"
 
   fun apply(h: TestHelper) ? =>
@@ -134,7 +140,7 @@ class iso _TestIterAny is UnitTest
     input(2)? = -6
     h.assert_false(Iter[I64](input.values()).any(is_positive))
 
-class iso _TestIterCollect is UnitTest
+class \nodoc\ iso _TestIterCollect is UnitTest
   fun name(): String => "itertools/Iter.collect"
 
   fun apply(h: TestHelper) =>
@@ -143,7 +149,7 @@ class iso _TestIterCollect is UnitTest
       input,
       Iter[I64](input.values()).collect(Array[I64]))
 
-class iso _TestIterCount is UnitTest
+class \nodoc\ iso _TestIterCount is UnitTest
   fun name(): String => "itertools/Iter.count"
 
   fun apply(h: TestHelper) =>
@@ -157,7 +163,7 @@ class iso _TestIterCount is UnitTest
       input2.size(),
       Iter[I64](input2.values()).count())
 
-class iso _TestIterCycle is UnitTest
+class \nodoc\ iso _TestIterCycle is UnitTest
   fun name(): String => "itertools/Iter.cycle"
 
   fun apply(h: TestHelper) =>
@@ -183,7 +189,20 @@ class iso _TestIterCycle is UnitTest
 
     h.assert_array_eq[String](expected, actual)
 
-class iso _TestIterEnum is UnitTest
+class \nodoc\ iso _TestIterDedup is UnitTest
+  fun name(): String => "itertools/Iter.dedup"
+
+  fun apply(h: TestHelper) ? =>
+    let iter = Iter[USize]([as USize: 1; 1; 2; 3; 3; 2; 2].values()).dedup()
+    let expected = [as USize: 1; 2; 3; 2]
+
+    var i: USize = 0
+    for v in iter do
+      h.assert_eq[USize](v, expected(i)?)
+      i = i + 1
+    end
+
+class \nodoc\ iso _TestIterEnum is UnitTest
   fun name(): String => "itertools/Iter.enum"
 
   fun apply(h: TestHelper) ? =>
@@ -200,7 +219,7 @@ class iso _TestIterEnum is UnitTest
     end
     h.assert_eq[USize](i, 3)
 
-class iso _TestIterFilter is UnitTest
+class \nodoc\ iso _TestIterFilter is UnitTest
   fun name(): String => "itertools/Iter.filter"
 
   fun apply(h: TestHelper) =>
@@ -233,7 +252,7 @@ class iso _TestIterFilter is UnitTest
 
     h.assert_array_eq[String](actual, expected)
 
-class iso _TestIterFilterMap is UnitTest
+class \nodoc\ iso _TestIterFilterMap is UnitTest
   fun name(): String => "itertools/Iter.filter_map"
 
   fun apply(h: TestHelper) ? =>
@@ -252,7 +271,7 @@ class iso _TestIterFilterMap is UnitTest
     h.assert_eq[I64](2, iter.next()?)
     h.assert_false(iter.has_next())
 
-class iso _TestIterFind is UnitTest
+class \nodoc\ iso _TestIterFind is UnitTest
   fun name(): String => "itertools/Iter.find"
 
   fun apply(h: TestHelper) ? =>
@@ -267,7 +286,7 @@ class iso _TestIterFind is UnitTest
 
     h.assert_eq[I64](5, Iter[I64](input.values()).find({(x) => x > 0 }, 4)?)
 
-class iso _TestIterFlatMap is UnitTest
+class \nodoc\ iso _TestIterFlatMap is UnitTest
   fun name(): String => "itertools/Iter.flat_map"
 
   fun apply(h: TestHelper) ? =>
@@ -301,7 +320,7 @@ class iso _TestIterFlatMap is UnitTest
     h.assert_eq[U8](1, iter.next()?)
     h.assert_false(iter.has_next())
 
-class iso _TestIterFold is UnitTest
+class \nodoc\ iso _TestIterFold is UnitTest
   fun name(): String => "itertools/Iter.fold"
 
   fun apply(h: TestHelper) =>
@@ -314,7 +333,46 @@ class iso _TestIterFold is UnitTest
         .fold_partial[I64](0, {(acc, x) ? => error })?
     })
 
-class iso _TestIterLast is UnitTest
+class \nodoc\ iso _TestIterInterleave is UnitTest
+  fun name(): String => "itertools/Iter.interleave"
+
+  fun apply(h: TestHelper) ? =>
+    let iter = Iter[USize](Range(0, 4)).interleave(Range(4, 6))
+    let expected = [as USize: 0; 4; 1; 5; 2; 3]
+
+    var i: USize = 0
+    for v in iter do
+      h.assert_eq[USize](v, expected(i)?)
+      i = i + 1
+    end
+
+class \nodoc\ iso _TestIterInterleaveShortest is UnitTest
+  fun name(): String => "itertools/Iter.interleave_shortest"
+
+  fun apply(h: TestHelper) ? =>
+    let iter = Iter[USize](Range(0, 4)).interleave_shortest(Range(4, 6))
+    let expected = [as USize: 0; 4; 1; 5; 2]
+
+    var i: USize = 0
+    for v in iter do
+      h.assert_eq[USize](v, expected(i)?)
+      i = i + 1
+    end
+
+class \nodoc\ iso _TestIterIntersperse is UnitTest
+  fun name(): String => "itertools/Iter.intersperse"
+
+  fun apply(h: TestHelper) ? =>
+    let iter = Iter[USize](Range(0, 3)).intersperse(8)
+    let expected = [as USize: 0; 8; 1; 8; 2]
+
+    var i: USize = 0
+    for v in iter do
+      h.assert_eq[USize](v, expected(i)?)
+      i = i + 1
+    end
+
+class \nodoc\ iso _TestIterLast is UnitTest
   fun name(): String => "itertools/Iter.last"
 
   fun apply(h: TestHelper) ? =>
@@ -333,7 +391,7 @@ class iso _TestIterLast is UnitTest
     h.assert_eq[I64](3,
       Iter[I64](input4.values()).last()?)
 
-class iso _TestIterMap is UnitTest
+class \nodoc\ iso _TestIterMap is UnitTest
   fun name(): String => "itertools/Iter.map"
 
   fun apply(h: TestHelper) =>
@@ -347,7 +405,7 @@ class iso _TestIterMap is UnitTest
 
     h.assert_array_eq[String](actual, expected)
 
-class iso _TestIterNextOr is UnitTest
+class \nodoc\ iso _TestIterNextOr is UnitTest
   fun name(): String => "itertools/Iter.next_or"
 
   fun apply(h: TestHelper) =>
@@ -363,7 +421,7 @@ class iso _TestIterNextOr is UnitTest
     h.assert_false(iter.has_next())
     h.assert_eq[U64](1, iter.next_or(1))
 
-class iso _TestIterNth is UnitTest
+class \nodoc\ iso _TestIterNth is UnitTest
   fun name(): String => "itertools/Iter.nth"
 
   fun apply(h: TestHelper) ? =>
@@ -385,7 +443,7 @@ class iso _TestIterNth is UnitTest
           end).nth(6)?
     })
 
-class iso _TestIterRun is UnitTest
+class \nodoc\ iso _TestIterRun is UnitTest
   fun name(): String => "itertools/Iter.run"
 
   fun apply(h: TestHelper) =>
@@ -411,7 +469,7 @@ class iso _TestIterRun is UnitTest
 
     for (_, v) in actions.pairs() do h.assert_true(v) end
 
-class iso _TestIterSkip is UnitTest
+class \nodoc\ iso _TestIterSkip is UnitTest
   fun name(): String => "itertools/Iter.skip"
 
   fun apply(h: TestHelper) ? =>
@@ -428,7 +486,7 @@ class iso _TestIterSkip is UnitTest
 
     h.assert_false(Iter[I64](input.values()).skip(4).has_next())
 
-class iso _TestIterSkipWhile is UnitTest
+class \nodoc\ iso _TestIterSkipWhile is UnitTest
   fun name(): String => "itertools/Iter.skip_while"
 
   fun apply(h: TestHelper) ? =>
@@ -438,7 +496,20 @@ class iso _TestIterSkipWhile is UnitTest
     h.assert_eq[I64](-1,
       Iter[I64](input.values()).skip_while({(x) => x < -2 }).next()?)
 
-class iso _TestIterTake is UnitTest
+class \nodoc\ iso _TestIterStepBy is UnitTest
+  fun name(): String => "itertools/Iter.step_by"
+
+  fun apply(h: TestHelper) ? =>
+    let iter = Iter[USize](Range(0, 10)).step_by(2)
+    let expected = [as USize: 1; 3; 5; 7; 9]
+
+    var i: USize = 0
+    for v in iter do
+      h.assert_eq[USize](v, expected(i)?)
+      i = i + 1
+    end
+
+class \nodoc\ iso _TestIterTake is UnitTest
   fun name(): String => "itertools/Iter.take"
 
   fun apply(h: TestHelper) =>
@@ -473,7 +544,7 @@ class iso _TestIterTake is UnitTest
 
     h.complete(true)
 
-class iso _TestIterTakeWhile is UnitTest
+class \nodoc\ iso _TestIterTakeWhile is UnitTest
   fun name(): String => "itertools/Iter.take_while"
 
   fun apply(h: TestHelper) ? =>
@@ -502,7 +573,20 @@ class iso _TestIterTakeWhile is UnitTest
     h.assert_eq[USize](1, infinite.next()?)
     h.assert_false(infinite.has_next())
 
-class iso _TestIterZip is UnitTest
+class \nodoc\ iso _TestIterUnique is UnitTest
+  fun name(): String => "itertools/Iter.unique"
+
+  fun apply(h: TestHelper) ? =>
+    let iter = Iter[USize]([as USize: 1; 2; 1; 1; 3; 4; 1].values()).unique()
+    let expected = [as USize: 1; 2; 3; 4]
+
+    var i: USize = 0
+    for v in iter do
+      h.assert_eq[USize](v, expected(i)?)
+      i = i + 1
+    end
+
+class \nodoc\ iso _TestIterZip is UnitTest
   fun name(): String => "itertools/Iter.zip"
 
   fun apply(h: TestHelper) =>

@@ -2,6 +2,8 @@
 
 Prebuilt Pony binaries are available on a number of platforms. They are built using a very generic CPU instruction set and as such, will not provide maximum performance. If you need to get the best performance possible from your Pony program, we strongly recommend [building from source](BUILD.md).
 
+All prebuilt releases are currently AMD64 only. If you want to install on different CPU architecture, you'll need to [build from source](BUILD.md).
+
 Prebuilt Pony installations will use clang as the default C compiler and clang++ as the default C++ compiler. If you prefer to use different compilers, such as gcc and g++, these defaults can be overridden by setting the `$CC` and `$CXX` environment variables to your compiler of choice.
 
 ## FreeBSD 13.0
@@ -32,7 +34,6 @@ Linux Mint 19.3 | ubuntu18.04
 Rocky 8 | rocky8
 Ubuntu 18.04 | ubuntu18.04
 Ubuntu 20.04 | ubuntu20.04
-Ubuntu 21.04 | ubuntu21.04
 
 N.B. If you platform isn't listed, skip to the next section and ponyup will install, as appropriate a Glibc or musl libc build of ponyc.
 

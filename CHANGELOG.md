@@ -13,6 +13,46 @@ All notable changes to the Pony compiler and standard library will be documented
 ### Changed
 
 
+## [0.48.0] - 2022-02-08
+
+### Fixed
+
+- Fix runtime crash when tracing class iso containing struct val ([PR #3993](https://github.com/ponylang/ponyc/pull/3993))
+
+### Added
+
+- Add a pony primitive that exposes scheduler information ([PR #3984](https://github.com/ponylang/ponyc/pull/3984))
+- Expose additional scheduler info via the runtime_info package ([PR #3988](https://github.com/ponylang/ponyc/pull/3988))
+- Add additional methods to itertools ([PR #3992](https://github.com/ponylang/ponyc/pull/3992))
+
+### Changed
+
+- Stop creating prebuilt ponyc releases for Ubuntu 21.04 ([PR #3990](https://github.com/ponylang/ponyc/pull/3990))
+- Revert "prevent non-opaque structs from being used as behaviour parameters" ([PR #3995](https://github.com/ponylang/ponyc/pull/3995))
+- Update LLVM to 13.0.1 ([PR #3994](https://github.com/ponylang/ponyc/pull/3994))
+- Remove out parameter from `pony_os_stdin_read` ([PR #4000](https://github.com/ponylang/ponyc/pull/4000))
+
+## [0.47.0] - 2022-02-02
+
+### Fixed
+
+- Fix return checking in behaviours and constructors ([PR #3971](https://github.com/ponylang/ponyc/pull/3971))
+- Fix issue that could lead to a muted actor being run ([PR #3974](https://github.com/ponylang/ponyc/pull/3974))
+- Fix loophole that allowed interfaces to be used to violate encapsulation ([PR #3973](https://github.com/ponylang/ponyc/pull/3973))
+- Fix compiler assertion failure when assigning error to a variable ([PR #3980](https://github.com/ponylang/ponyc/pull/3980))
+
+### Added
+
+- Add "nodoc" annotation ([PR #3978](https://github.com/ponylang/ponyc/pull/3978))
+
+### Changed
+
+- Remove simplebuiltin compiler option ([PR #3965](https://github.com/ponylang/ponyc/pull/3965))
+- Remove library mode option from ponyc ([PR #3975](https://github.com/ponylang/ponyc/pull/3975))
+- Change `builtin/AsioEventNotify` from an interface to a trait ([PR #3973](https://github.com/ponylang/ponyc/pull/3973))
+- Don't allow interfaces to have private methods ([PR #3973](https://github.com/ponylang/ponyc/pull/3973))
+- Remove hack that prevented documentation generation for "test classes" ([PR #3978](https://github.com/ponylang/ponyc/pull/3978))
+
 ## [0.46.0] - 2022-01-16
 
 ### Changed
